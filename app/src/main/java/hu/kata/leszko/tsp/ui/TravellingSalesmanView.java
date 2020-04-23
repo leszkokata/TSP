@@ -13,7 +13,10 @@ import java.util.ArrayList;
 
 import hu.kata.leszko.tsp.City;
 import hu.kata.leszko.tsp.R;
+import hu.kata.leszko.tsp.algorithm.TSPBranchAndBound;
+import hu.kata.leszko.tsp.algorithm.TSPBruteForce;
 import hu.kata.leszko.tsp.algorithm.TSPGreedy;
+import hu.kata.leszko.tsp.algorithm.TSPSolver;
 
 public class TravellingSalesmanView extends View {
     private Context context = null;
@@ -22,7 +25,7 @@ public class TravellingSalesmanView extends View {
     private City currentCity = null;
     private Bitmap firstCityBitmap = null;
     private Paint linePaint = new Paint();
-    private TSPGreedy tspGreedy;
+    private TSPSolver tspSolver;
 
     public TravellingSalesmanView(Context context) {
         super(context);
@@ -33,7 +36,6 @@ public class TravellingSalesmanView extends View {
         linePaint.setColor(getResources().getColor(R.color.colorPrimaryDark));
         linePaint.setStrokeWidth(10);
         setBackgroundColor(getResources().getColor(android.R.color.darker_gray));
-        tspGreedy = new TSPGreedy();
     }
 
     @Override
@@ -132,18 +134,21 @@ public class TravellingSalesmanView extends View {
         }
 
         else if(cities.size() >= 4) {
-            int[] order = tspGreedy.solve(cities);
+            int[] order = null;
+            try {
+                order = tspSolver.solve(cities);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
 
             int cityWidth = cityBitmap.getWidth();
             int cityheight = cityBitmap.getHeight();
             for (int i = 0; i < cities.size(); i++) {
-                if (cities.size() >= 4) {
                     canvas.drawLine(cities.get(order[i]).getX() + cityWidth / 2,
                             cities.get(order[i]).getY() + cityheight / 2,
                             cities.get(order[i + 1]).getX() + cityWidth / 2,
                             cities.get(order[i + 1]).getY() + cityheight / 2,
                             linePaint);
-                }
             }
         }
 
@@ -173,5 +178,19 @@ public class TravellingSalesmanView extends View {
     private Bitmap getBitmap(int bitmapId) {
         return BitmapFactory.decodeResource(context.getResources(),
                 bitmapId);
+    }
+
+    public void setTSPAlgorithm(int tspId) {
+        switch (tspId){
+            case R.id.nav_bruteforce:
+                tspSolver = new TSPBruteForce();
+                break;
+            case R.id.nav_bandb:
+                tspSolver = new TSPBranchAndBound();
+                break;
+            case R.id.nav_greedy:
+                tspSolver = new TSPGreedy();
+                break;
+        }
     }
 }

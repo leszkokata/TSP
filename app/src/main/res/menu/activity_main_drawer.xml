@@ -6,9 +6,17 @@
     <group android:checkableBehavior="single">
 
         <item
-            android:id="@+id/nav_home"
-            android:icon="@drawable/ic_menu_camera"
-            android:title="Teszt" />
+            android:id="@+id/nav_bruteforce"
+            android:icon="@drawable/ic_bruteforce"
+            android:title="@string/menu_bruteforce" />
+        <item
+            android:id="@+id/nav_bandb"
+            android:icon="@drawable/ic_bnb"
+            android:title="@string/menu_bandb" />
+        <item
+            android:id="@+id/nav_greedy"
+            android:icon="@drawable/ic_greedy"
+            android:title="@string/menu_greedy" />
 
     </group>
 </menu>

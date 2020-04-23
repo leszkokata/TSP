@@ -1,5 +1,7 @@
 package hu.kata.leszko.tsp;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -13,6 +15,7 @@ import com.google.android.material.navigation.NavigationView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.core.view.GravityCompat;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -23,7 +26,7 @@ import androidx.appcompat.widget.Toolbar;
 
 import hu.kata.leszko.tsp.ui.TravellingSalesmanView;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
 
     private AppBarConfiguration mAppBarConfiguration;
     private DrawerLayout drawer;
@@ -44,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
 
         drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
 
         mAppBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.nav_home)
@@ -55,9 +59,10 @@ public class MainActivity extends AppCompatActivity {
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
-        NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
-        NavigationUI.setupWithNavController(navigationView, navController);
+        SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+        int selectedMenuId = sharedPref.getInt(getString(R.string.solver_key), R.id.nav_bandb);
+        navigationView.setCheckedItem(selectedMenuId);
+        travellingSalesmanView.setTSPAlgorithm(selectedMenuId);
     }
 
     @Override
@@ -73,5 +78,40 @@ public class MainActivity extends AppCompatActivity {
         travellingSalesmanView.invalidate();
         Toast.makeText(this, "Városok törölve", Toast.LENGTH_SHORT).show();
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+        SharedPreferences.Editor editor =getPreferences(Context.MODE_PRIVATE).edit();
+        editor.putInt(getString(R.string.solver_key), menuItem.getItemId());
+        editor.commit();
+
+        travellingSalesmanView.setTSPAlgorithm(menuItem.getItemId());
+
+        switch ((menuItem.getItemId())){
+            case R.id.nav_bandb:
+                Toast.makeText(this, getResources().getString(R.string.menu_bandb), Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.nav_bruteforce:
+                Toast.makeText(this, getResources().getString(R.string.menu_bruteforce), Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.nav_greedy:
+                Toast.makeText(this, getResources().getString(R.string.menu_greedy), Toast.LENGTH_SHORT).show();
+                break;
+        }
+
+        travellingSalesmanView.invalidate();
+
+        drawer.closeDrawer(GravityCompat.START);
+        return true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
+        }
     }
 }

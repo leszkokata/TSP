@@ -4,6 +4,11 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="nav_header_title">Szegedi Tudományegyetem</string>
     <string name="nav_header_subtitle">Optimalizálás alkalmazásai</string>
+    <string name="nav_header_name">Leszkó Kata</string>
     <string name="nav_header_desc">Szegedi Tudományegyetem</string>
     <string name="action_clear">Városok törlése</string>
+    <string name="menu_bruteforce">Nyers erő</string>
+    <string name="menu_bandb">Elágazás és korlátozás</string>
+    <string name="menu_greedy">Mohó</string>
+    <string name="solver_key">Solver Key</string>
 </resources>
