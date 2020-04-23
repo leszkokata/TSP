@@ -1,13 +1,17 @@
 package hu.kata.leszko.tsp;
 
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.Menu;
+import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -17,20 +21,30 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import hu.kata.leszko.tsp.ui.TravellingSalesmanView;
+
 public class MainActivity extends AppCompatActivity {
 
     private AppBarConfiguration mAppBarConfiguration;
     private DrawerLayout drawer;
+    TravellingSalesmanView travellingSalesmanView;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        travellingSalesmanView = new TravellingSalesmanView(this);
+        RelativeLayout travelingMainLayout = findViewById(R.id.travelling_main_view);
+        travelingMainLayout.addView(travellingSalesmanView);
+
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
+
         mAppBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.nav_home)
                 .setDrawerLayout(drawer)
@@ -53,4 +67,11 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        travellingSalesmanView.clearCities();
+        travellingSalesmanView.invalidate();
+        Toast.makeText(this, "Városok törölve", Toast.LENGTH_SHORT).show();
+        return super.onOptionsItemSelected(item);
+    }
 }
