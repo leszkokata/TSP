@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -12,19 +13,27 @@ import java.util.ArrayList;
 
 import hu.kata.leszko.tsp.City;
 import hu.kata.leszko.tsp.R;
+import hu.kata.leszko.tsp.algorithm.TSPGreedy;
 
 public class TravellingSalesmanView extends View {
     private Context context = null;
     private Bitmap cityBitmap = null;
     private ArrayList<City> cities;
     private City currentCity = null;
-    Bitmap firstCityBitmap = null;
+    private Bitmap firstCityBitmap = null;
+    private Paint linePaint = new Paint();
+    private TSPGreedy tspGreedy;
 
     public TravellingSalesmanView(Context context) {
         super(context);
         this.context = context;
         cities = new ArrayList<>();
         setFocusable(true); //necessary for getting the touch events
+        linePaint = new Paint();
+        linePaint.setColor(getResources().getColor(R.color.colorPrimaryDark));
+        linePaint.setStrokeWidth(10);
+        setBackgroundColor(getResources().getColor(android.R.color.darker_gray));
+        tspGreedy = new TSPGreedy();
     }
 
     @Override
@@ -92,9 +101,54 @@ public class TravellingSalesmanView extends View {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
-        boolean isFirst = true;
+        //draw the route
+        if(cities.size() == 2) {
+            int cityWidth = cityBitmap.getWidth();
+            int cityheight = cityBitmap.getHeight();
+            canvas.drawLine(cities.get(0).getX() + cityWidth / 2,
+                    cities.get(0).getY() + cityheight / 2,
+                    cities.get(1).getX() + cityWidth / 2,
+                    cities.get(1).getY() + cityheight / 2,
+                    linePaint);
+        }
+        else if(cities.size() == 3 ){
+            int cityWidth = cityBitmap.getWidth();
+            int cityheight = cityBitmap.getHeight();
+            canvas.drawLine(cities.get(0).getX() + cityWidth / 2,
+                    cities.get(0).getY() + cityheight / 2,
+                    cities.get(1).getX() + cityWidth / 2,
+                    cities.get(1).getY() + cityheight / 2,
+                    linePaint);
+            canvas.drawLine(cities.get(1).getX() + cityWidth / 2,
+                    cities.get(1).getY() + cityheight / 2,
+                    cities.get(2).getX() + cityWidth / 2,
+                    cities.get(2).getY() + cityheight / 2,
+                    linePaint);
+            canvas.drawLine(cities.get(2).getX() + cityWidth / 2,
+                    cities.get(2).getY() + cityheight / 2,
+                    cities.get(0).getX() + cityWidth / 2,
+                    cities.get(0).getY() + cityheight / 2,
+                    linePaint);
+        }
+
+        else if(cities.size() >= 4) {
+            int[] order = tspGreedy.solve(cities);
+
+            int cityWidth = cityBitmap.getWidth();
+            int cityheight = cityBitmap.getHeight();
+            for (int i = 0; i < cities.size(); i++) {
+                if (cities.size() >= 4) {
+                    canvas.drawLine(cities.get(order[i]).getX() + cityWidth / 2,
+                            cities.get(order[i]).getY() + cityheight / 2,
+                            cities.get(order[i + 1]).getX() + cityWidth / 2,
+                            cities.get(order[i + 1]).getY() + cityheight / 2,
+                            linePaint);
+                }
+            }
+        }
 
         //draw the cities on the canvas
+        boolean isFirstCity = true;
         for (City city : cities) {
             if (cityBitmap == null) {
                 cityBitmap = getBitmap(R.drawable.uni);
@@ -102,9 +156,9 @@ public class TravellingSalesmanView extends View {
             if(firstCityBitmap == null){
                 firstCityBitmap = getBitmap(R.drawable.first_uni);
             }
-            if(isFirst){
+            if(isFirstCity){
                 canvas.drawBitmap(firstCityBitmap, city.getX(), city.getY(), null);
-                isFirst = false;
+                isFirstCity = false;
             } else {
                 canvas.drawBitmap(cityBitmap, city.getX(), city.getY(), null);
             }
