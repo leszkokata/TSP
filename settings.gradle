@@ -1,0 +1,2 @@
+rootProject.name='TSP'
+include ':app'
