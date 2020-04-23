@@ -4,6 +4,8 @@ Az utazó ügynök problémában adottak városok, amelyeket az ügynöknek meg 
 
 Ez az Android alkalmazás a TSP problémát a felhasználó által megadott pontokra vizsgálja.
 
+![Utazo ugynok demo](demo/demo.gif)
+
 ### Város elhelyezése
 A képernyő tetszőleges pontját megérintve (amennyiben még nincs ott másik város) új várost adhatunk hozzá.
 ### Város mozgatása
